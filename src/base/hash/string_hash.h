@@ -1,4 +1,3 @@
-// Copyright 2011 Google Inc. All Rights Reserved.
 //
 // These are the core hashing routines which operate on strings. We define
 // strings loosely as a sequence of bytes, and these routines are designed to
@@ -13,11 +12,13 @@
 
 #include <stddef.h>
 
-#include "kudu/gutil/port.h"
-#include "kudu/gutil/integral_types.h"
-#include "kudu/gutil/hash/city.h"
-#include "kudu/gutil/hash/jenkins.h"
-#include "kudu/gutil/hash/jenkins_lookup2.h"
+#include "base/core/port.h"
+#include "base/core/integral_types.h"
+#include "base/hash/city.h"
+#include "base/hash/jenkins.h"
+#include "base/hash/jenkins_lookup2.h"
+
+namespace base {
 
 namespace hash_internal {
 
@@ -41,7 +42,7 @@ static const uint64 kMix64 = GG_ULONGLONG(0x2b992ddfa23249d6);
 inline size_t HashStringThoroughlyWithSeed(const char* s, size_t len,
                                            size_t seed) {
   if (hash_internal::x86_64)
-    return static_cast<size_t>(util_hash::CityHash64WithSeed(s, len, seed));
+    return static_cast<size_t>(CityHash64WithSeed(s, len, seed));
 
   if (hash_internal::sixty_four_bit)
     return Hash64StringWithSeed(s, static_cast<uint32>(len), seed);
@@ -52,7 +53,7 @@ inline size_t HashStringThoroughlyWithSeed(const char* s, size_t len,
 
 inline size_t HashStringThoroughly(const char* s, size_t len) {
   if (hash_internal::x86_64)
-    return static_cast<size_t>(util_hash::CityHash64(s, len));
+    return static_cast<size_t>(CityHash64(s, len));
 
   if (hash_internal::sixty_four_bit)
     return Hash64StringWithSeed(s, static_cast<uint32>(len),
@@ -65,7 +66,7 @@ inline size_t HashStringThoroughly(const char* s, size_t len) {
 inline size_t HashStringThoroughlyWithSeeds(const char* s, size_t len,
                                             size_t seed0, size_t seed1) {
   if (hash_internal::x86_64)
-    return util_hash::CityHash64WithSeeds(s, len, seed0, seed1);
+    return CityHash64WithSeeds(s, len, seed0, seed1);
 
   if (hash_internal::sixty_four_bit) {
     uint64 a = seed0;
@@ -82,4 +83,5 @@ inline size_t HashStringThoroughlyWithSeeds(const char* s, size_t len,
   return c;
 }
 
+} // namespace base
 #endif  // UTIL_HASH_STRING_HASH_H_

@@ -1,27 +1,26 @@
-// Copyright 2008 Google Inc.  All rights reserved.
 
 #include <string.h>
 #include <string>
 using std::string;
 
-#include "kudu/gutil/basictypes.h"
-#include "kudu/gutil/strings/numbers.h"
-#include "kudu/gutil/strings/stringpiece.h"
+#include "base/core/basictypes.h"
+#include "base/strings/numbers.h"
+#include "base/strings/stringpiece.h"
 
 
 #ifndef STRINGS_SUBSTITUTE_H_
 #define STRINGS_SUBSTITUTE_H_
 
-namespace strings {
+namespace base {
 
 // ----------------------------------------------------------------------
-// strings::Substitute()
-// strings::SubstituteAndAppend()
+// base::Substitute()
+// base::SubstituteAndAppend()
 //   Kind of like StringPrintf, but different.
 //
 //   Example:
 //     string GetMessage(string first_name, string last_name, int age) {
-//       return strings::Substitute("My name is $0 $1 and I am $2 years old.",
+//       return base::Substitute("My name is $0 $1 and I am $2 years old.",
 //                                  first_name, last_name, age);
 //     }
 //
@@ -53,7 +52,7 @@ namespace strings {
 //   *output.  Example:
 //
 //     string str;
-//     strings::SubstituteAndAppend(&str,
+//     base::SubstituteAndAppend(&str,
 //                                  "My name is $0 $1 and I am $2 years old.",
 //                                  first_name, last_name, age);
 //
@@ -187,6 +186,6 @@ inline string Substitute(
   return result;
 }
 
-}  // namespace strings
+}  // namespace base
 
 #endif  // STRINGS_SUBSTITUTE_H_

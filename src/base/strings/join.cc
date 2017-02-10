@@ -183,8 +183,8 @@ void JoinCSVLineWithDelimiter(const vector<string>& cols, char delimiter,
       gscoped_array<char> buf(new char[size]);
 
       // Leave space at beginning and end for bracketing double-quotes.
-      int escaped_size = base::EscapeStrForCSV(col.c_str(),
-                                                  buf.get() + 1, size - 2);
+      int escaped_size = EscapeStrForCSV(col.c_str(),
+                                         buf.get() + 1, size - 2);
       CHECK_GE(escaped_size, 0) << "Buffer somehow wasn't large enough.";
       CHECK_GE(size, escaped_size + 3)
         << "Buffer should have one space at the beginning for a "

@@ -1,4 +1,3 @@
-// Copyright 2011 Google Inc. All Rights Reserved.
 //
 // This is the legacy unified hash library implementation. Its components are
 // being split up into smaller, dedicated libraries. What remains here are
@@ -7,13 +6,13 @@
 // To find the implementation of the core Bob Jenkins lookup2 hash, look in
 // jenkins.cc.
 
-#include "kudu/gutil/hash/hash.h"
+#include "base/hash/hash.h"
 
-#include "kudu/gutil/integral_types.h"
+#include "base/core/integral_types.h"
 #include <glog/logging.h>
-#include "kudu/gutil/logging-inl.h"
-#include "kudu/gutil/hash/jenkins.h"
-#include "kudu/gutil/hash/jenkins_lookup2.h"
+#include "base/core/logging-inl.h"
+#include "base/hash/jenkins.h"
+#include "base/hash/jenkins_lookup2.h"
 
 // For components that ship code externally (notably the Google Search
 // Appliance) we want to change the fingerprint function so that
@@ -35,6 +34,8 @@ static const uint32 kFingerprintSeed1 = 102072;
 static inline uint32 char2unsigned(char c) {
   return static_cast<uint32>(static_cast<unsigned char>(c));
 }
+
+namespace base {
 
 uint64 FingerprintReferenceImplementation(const char *s, uint32 len) {
   uint32 hi = Hash32StringWithSeed(s, len, kFingerprintSeed0);
@@ -183,6 +184,8 @@ uint64 FingerprintInterleavedImplementation(const char *s, uint32 len) {
   return CombineFingerprintHalves(c, f);
 }
 
+} // namespace base
+
 // Extern template definitions.
 
 #if defined(__GNUC__)
@@ -193,5 +196,4 @@ template class hash_set<std::string>;
 template class hash_map<std::string, std::string>;
 
 }  // namespace __gnu_cxx
-
 #endif

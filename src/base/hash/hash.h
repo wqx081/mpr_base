@@ -1,7 +1,4 @@
 //
-// Copyright (C) 1999 and onwards Google, Inc.
-//
-//
 // This file contains routines for hashing and fingerprinting.
 //
 // A hash function takes an arbitrary input bitstring (string, char*,
@@ -86,17 +83,18 @@ using __gnu_cxx::hash_set;
 #include <string>
 #include <utility>
 
-#include "kudu/gutil/casts.h"
-#include "kudu/gutil/int128.h"
-#include "kudu/gutil/integral_types.h"
-#include "kudu/gutil/macros.h"
-#include "kudu/gutil/port.h"
-#include "kudu/gutil/hash/city.h"
-#include "kudu/gutil/hash/hash128to64.h"
-#include "kudu/gutil/hash/jenkins.h"
-#include "kudu/gutil/hash/jenkins_lookup2.h"
-#include "kudu/gutil/hash/legacy_hash.h"
-#include "kudu/gutil/hash/string_hash.h"
+#include "base/core/casts.h"
+#include "base/core/int128.h"
+#include "base/core/integral_types.h"
+#include "base/core/macros.h"
+#include "base/core/port.h"
+
+#include "base/hash/city.h"
+#include "base/hash/hash128to64.h"
+#include "base/hash/jenkins.h"
+#include "base/hash/jenkins_lookup2.h"
+#include "base/hash/legacy_hash.h"
+#include "base/hash/string_hash.h"
 
 #include <ext/hash_set>
 namespace __gnu_cxx {
@@ -124,6 +122,7 @@ template<> struct hash<bool> {
 }  // namespace __gnu_cxx
 
 
+namespace base {
 
 // ----------------------------------------------------------------------
 // Fingerprint()
@@ -214,6 +213,8 @@ inline uint64 FingerprintCat(uint64 fp1, uint64 fp2) {
   return Hash64NumWithSeed(fp1, fp2);
 }
 
+} // namespace base
+
 #include <ext/hash_set>
 namespace __gnu_cxx {
 
@@ -222,16 +223,16 @@ namespace __gnu_cxx {
 template<> struct hash<uint128> {
   size_t operator()(const uint128& x) const {
     if (sizeof(&x) == 8) {  // 64-bit systems have 8-byte pointers.
-      return Hash128to64(x);
+      return base::Hash128to64(x);
     } else {
       uint32 a = static_cast<uint32>(Uint128Low64(x)) +
           static_cast<uint32>(0x9e3779b9UL);
       uint32 b = static_cast<uint32>(Uint128Low64(x) >> 32) +
           static_cast<uint32>(0x9e3779b9UL);
-      uint32 c = static_cast<uint32>(Uint128High64(x)) + MIX32;
-      mix(a, b, c);
+      uint32 c = static_cast<uint32>(Uint128High64(x)) + base::MIX32;
+      base::mix(a, b, c);
       a += static_cast<uint32>(Uint128High64(x) >> 32);
-      mix(a, b, c);
+      base::mix(a, b, c);
       return c;
     }
   }
@@ -261,14 +262,14 @@ template<class T> struct hash<T*> {
 template<class _CharT, class _Traits, class _Alloc>
 struct hash<std::basic_string<_CharT, _Traits, _Alloc> > {
   size_t operator()(const std::basic_string<_CharT, _Traits, _Alloc>& k) const {
-    return HashTo32(k.data(), static_cast<uint32>(k.length()));
+    return base::HashTo32(k.data(), static_cast<uint32>(k.length()));
   }
 };
 
 // they don't define a hash for const string at all
 template<> struct hash<const std::string> {
   size_t operator()(const std::string& k) const {
-    return HashTo32(k.data(), static_cast<uint32>(k.length()));
+    return base::HashTo32(k.data(), static_cast<uint32>(k.length()));
   }
 };
 #endif  // defined(__GNUC__)
@@ -312,8 +313,8 @@ struct hash<pair<First, Second> > {
     size_t h2 = hash<Second>()(p.second);
     // The decision below is at compile time
     return (sizeof(h1) <= sizeof(uint32)) ?
-            Hash32NumWithSeed(h1, h2)
-            : Hash64NumWithSeed(h1, h2);
+            base::Hash32NumWithSeed(h1, h2)
+            : base::Hash64NumWithSeed(h1, h2);
   }
   // Less than operator for MSVC.
   bool operator()(const pair<First, Second>& a,
@@ -327,6 +328,8 @@ struct hash<pair<First, Second> > {
 
 }  // namespace __gnu_cxx
 
+
+namespace base {
 
 // If you want an excellent string hash function, and you don't mind if it
 // might change when you sync and recompile, please use GoodFastHash<>.
@@ -396,6 +399,8 @@ struct GoodFastHash<const std::basic_string<_CharT, _Traits, _Alloc> > {
   static const size_t bucket_size = 4;  // These are required by MSVC
   static const size_t min_buckets = 8;  // 4 and 8 are defaults.
 };
+
+} // namespace base
 
 // Extern template declarations.
 //

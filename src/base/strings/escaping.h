@@ -231,21 +231,21 @@ string Utf8SafeCHexEscape(const StringPiece& src);
 //      BackslashUnescape(BackslashEscape(src, ":\\"), ":\\") == src
 // ----------------------------------------------------------------------
 void BackslashEscape(const StringPiece& src,
-                     const base::CharSet& to_escape,
+                     const CharSet& to_escape,
                      string* dest);
 void BackslashUnescape(const StringPiece& src,
-                       const base::CharSet& to_unescape,
+                       const CharSet& to_unescape,
                        string* dest);
 
 inline string BackslashEscape(const StringPiece& src,
-                              const base::CharSet& to_escape) {
+                              const CharSet& to_escape) {
   string s;
   BackslashEscape(src, to_escape, &s);
   return s;
 }
 
 inline string BackslashUnescape(const StringPiece& src,
-                                const base::CharSet& to_unescape) {
+                                const CharSet& to_unescape) {
   string s;
   BackslashUnescape(src, to_unescape, &s);
   return s;

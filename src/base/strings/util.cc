@@ -1,11 +1,8 @@
-//
-// Copyright (C) 1999-2005 Google, Inc.
-//
 
 // TODO(user): visit each const_cast.  Some of them are no longer necessary
 // because last Single Unix Spec and grte v2 are more const-y.
 
-#include "kudu/gutil/strings/util.h"
+#include "base/strings/util.h"
 
 #include <assert.h>
 #include <stdarg.h>
@@ -25,18 +22,20 @@ using std::string;
 using std::vector;
 
 #include <glog/logging.h>
-#include "kudu/gutil/logging-inl.h"
-#include "kudu/gutil/strings/ascii_ctype.h"
-#include "kudu/gutil/strings/numbers.h"
-#include "kudu/gutil/strings/stringpiece.h"
-#include "kudu/gutil/stl_util.h"  // for string_as_array, STLAppendToString
-#include "kudu/gutil/utf/utf.h"
+#include "base/core/logging-inl.h"
+#include "base/strings/ascii_ctype.h"
+#include "base/strings/numbers.h"
+#include "base/strings/stringpiece.h"
+#include "base/core/stl_util.h"  // for string_as_array, STLAppendToString
+#include "base/utf/utf.h"
 
 #ifdef OS_WINDOWS
 #ifdef min  // windows.h defines this to something silly
 #undef min
 #endif
 #endif
+
+namespace base {
 
 // Use this instead of gmtime_r if you want to build for Windows.
 // Windows doesn't have a 'gmtime_r', but it has the similar 'gmtime_s'.
@@ -1064,7 +1063,6 @@ int ReverseFindNth(StringPiece s, char c, int n) {
   return pos;
 }
 
-namespace strings {
 
 // FindEol()
 // Returns the location of the next end-of-line sequence.
@@ -1084,8 +1082,6 @@ StringPiece FindEol(StringPiece s) {
   }
   return StringPiece(s.data() + s.length(), 0);
 }
-
-}  // namespace strings
 
 //------------------------------------------------------------------------
 // OnlyWhitespace()
@@ -1213,6 +1209,8 @@ size_t lcpyT(CHAR* dst, const CHAR* src, size_t dst_size) {
 
 }  // namespace
 
-size_t strings::strlcpy(char* dst, const char* src, size_t dst_size) {
+size_t strlcpy(char* dst, const char* src, size_t dst_size) {
   return lcpyT<char>(dst, src, dst_size);
 }
+
+} // namespace base

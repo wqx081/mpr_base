@@ -1,46 +1,68 @@
+CXXFLAGS += -I.
+CXXFLAGS += -std=c++11 -Wall -Werror -Wno-char-subscripts -Wno-sign-compare -Wno-deprecated -g -c -o
 
-include build_config.mk
-export
+CXX=g++
 
-SRC_PREFIX=${CURDIR}/base
+CPP_SOURCES :=	\
+	base/core/atomicops-internals-x86.cc	\
+	base/core/bits.cc \
+	base/core/callback_internal.cc \
+	base/core/cpu.cc \
+	base/core/int128.cc \
+	base/core/once.cc \
+	base/core/ref_counted.cc \
+	base/core/ref_counted_memory.cc \
+	base/core/spinlock_internal.cc \
+	base/core/spinlock.cc \
+	base/core/sysinfo.cc \
+	base/hash/city.cc \
+	base/hash/hash.cc \
+	base/hash/jenkins.cc \
+	base/math/mathlimits.cc \
+	base/strings/ascii_ctype.cc \
+	base/strings/charset.cc \
+	base/strings/escaping.cc \
+	base/strings/human_readable.cc \
+	base/strings/join.cc \
+	base/strings/memutil.cc \
+	base/strings/numbers.cc \
+	base/strings/serialize.cc \
+	base/strings/split.cc \
+	base/strings/strcat.cc \
+	base/strings/stringpiece.cc \
+	base/strings/stringprintf.cc \
+	base/strings/strip.cc \
+	base/strings/strtoint.cc \
+	base/strings/substitute.cc \
+	base/strings/util.cc \
+	base/time/walltime.cc \
+	base/threading/thread_collision_warner.cc \
 
-all:
-	make -C ${SRC_PREFIX}/core
-#	make -C ${SRC_PREFIX}/util
-#	make -C ${SRC_PREFIX}/net
-#	make -C ${SRC_PREFIX}/http
-#	make -C ${SRC_PREFIX}/rpc
-#	make -C ${SRC_PREFIX}/fs
-#	make -C ${SRC_PREFIX}/common
-#	make -C ${SRC_PREFIX}/raft
-#	make -C ${SRC_PREFIX}/tests/rpc
-#	make -C ${SRC_PREFIX}/tests/util
+CPP_OBJECTS:=$(CPP_SOURCES:.cc=.o)
 
-#	make -C ${SRC_PREFIX}/app/zk
-#	make -C ${SRC_PREFIX}/common
-#	make -C ${SRC_PREFIX}/server
-#	make -C ${SRC_PREFIX}/master
-#	make -C ${SRC_PREFIX}/worker_server
-#	make -C ${SRC_PREFIX}/tests/master
-#	make -C ${SRC_PREFIX}/tests/rpc
-#	make -C ${SRC_PREFIX}/tests/util
+CC=gcc
+CFLAGS += -I. -Wall -Werror -std=c99 -g -c -o
+C_SOURCES := base/utf/rune.c
+C_OBJECTS := $(C_SOURCES:.c=.o)
+
+STATIC_LIB=libcore.a
+
+LIBS += $(STATIC_LIB)
+
+all: $(C_OBJECTS) $(CPP_OBJECTS) $(LIBS)
+
+$(STATIC_LIB): $(CPP_OBJECTS)
+	@echo "  [LINK] $@"
+	@ar rs $(STATIC_LIB) $(CPP_OBJECTS) $(C_OBJECTS)
+
+.cc.o:
+	@echo "  [CXX]  $@"
+	@$(CXX) $(CXXFLAGS) $@ $<
+
+.c.o:
+	@echo "  [CC]   $@"
+	@$(CC) $(CFLAGS) $@ $<
 
 clean:
-	make -C ${SRC_PREFIX}/core clean
-#	make -C ${SRC_PREFIX}/util clean
-#	make -C ${SRC_PREFIX}/net clean
-#	make -C ${SRC_PREFIX}/http clean
-#	make -C ${SRC_PREFIX}/rpc clean
-#	make -C ${SRC_PREFIX}/fs clean
-#	make -C ${SRC_PREFIX}/common clean
-#	make -C ${SRC_PREFIX}/raft clean
-#	make -C ${SRC_PREFIX}/tests/rpc clean
-#	make -C ${SRC_PREFIX}/tests/util clean
-
-#	make -C ${SRC_PREFIX}/common clean
-#	make -C ${SRC_PREFIX}/server clean
-#	make -C ${SRC_PREFIX}/master clean
-#	make -C ${SRC_PREFIX}/worker_server clean
-#	make -C ${SRC_PREFIX}/tests/rpc clean
-#	make -C ${SRC_PREFIX}/tests/util clean
-
+	@rm -fr $(CPP_OBJECTS)
+	@rm -fr $(LIBS)

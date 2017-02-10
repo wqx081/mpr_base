@@ -1,11 +1,10 @@
-// Copyright 2008 and onwards Google, Inc.
 //
 // #status: RECOMMENDED
 // #category: operations on strings
 // #summary: Functions for splitting strings into substrings.
 //
 // This file contains functions for splitting strings. The new and recommended
-// API for string splitting is the strings::Split() function. The old API is a
+// API for string splitting is the Split() function. The old API is a
 // large collection of standalone functions declared at the bottom of this file
 // in the global scope.
 //
@@ -17,8 +16,8 @@
 // (3) (Optional) Replace old Split*() API calls at call sites with calls to new
 //     Split() API.
 //
-#ifndef STRINGS_SPLIT_H_
-#define STRINGS_SPLIT_H_
+#ifndef BASE_STRINGS_SPLIT_H_
+#define BASE_STRINGS_SPLIT_H_
 
 #include <stddef.h>
 #include <algorithm>
@@ -53,21 +52,22 @@ using std::vector;
 
 #include <glog/logging.h>
 
-#include "kudu/gutil/integral_types.h"
-#include "kudu/gutil/logging-inl.h"
-#include "kudu/gutil/strings/charset.h"
-#include "kudu/gutil/strings/split_internal.h"
-#include "kudu/gutil/strings/stringpiece.h"
-#include "kudu/gutil/strings/strip.h"
+#include "base/core/integral_types.h"
+#include "base/core/logging-inl.h"
 
-namespace strings {
+#include "base/strings/charset.h"
+#include "base/strings/split_internal.h"
+#include "base/strings/stringpiece.h"
+#include "base/strings/strip.h"
+
+namespace base {
 
 //                              The new Split API
 //                                  aka Split2
-//                              aka strings::Split()
+//                              aka Split()
 //
 // This string splitting API consists of a Split() function in the ::strings
-// namespace and a handful of delimiter objects in the ::strings::delimiter
+// namespace and a handful of delimiter objects in the ::delimiter
 // namespace (more on delimiter objects below). The Split() function always
 // takes two arguments: the text to be split and the delimiter on which to split
 // the text. An optional third argument may also be given, which is a Predicate
@@ -78,15 +78,15 @@ namespace strings {
 // Example 1:
 //   // Splits the given string on commas. Returns the results in a
 //   // vector of strings.
-//   vector<string> v = strings::Split("a,b,c", ",");
+//   vector<string> v = Split("a,b,c", ",");
 //   assert(v.size() == 3);
 //
 // Example 2:
 //   // By default, empty strings are *included* in the output. See the
-//   // strings::SkipEmpty predicate below to omit them.
-//   vector<string> v = strings::Split("a,b,,c", ",");
+//   // SkipEmpty predicate below to omit them.
+//   vector<string> v = Split("a,b,,c", ",");
 //   assert(v.size() == 4);  // "a", "b", "", "c"
-//   v = strings::Split("", ",");
+//   v = Split("", ",");
 //   assert(v.size() == 1);  // v contains a single ""
 //
 // Example 3:
@@ -94,12 +94,12 @@ namespace strings {
 //   // are returned as StringPiece objects. Note that because we are storing
 //   // the results within StringPiece objects, we have to ensure that the input
 //   // string outlives any results.
-//   vector<StringPiece> v = strings::Split("a,b,c", ",");
+//   vector<StringPiece> v = Split("a,b,c", ",");
 //   assert(v.size() == 3);
 //
 // Example 4:
 //   // Stores results in a set<string>.
-//   set<string> a = strings::Split("a,b,c,a,b,c", ",");
+//   set<string> a = Split("a,b,c,a,b,c", ",");
 //   assert(a.size() == 3);
 //
 // Example 5:
@@ -108,7 +108,7 @@ namespace strings {
 //   // resulting from the split will be stored as a key to the 1st element. If
 //   // an odd number of elements are resolved, the last element is paired with
 //   // a default-constructed value (e.g., empty string).
-//   map<string, string> m = strings::Split("a,b,c", ",");
+//   map<string, string> m = Split("a,b,c", ",");
 //   assert(m.size() == 2);
 //   assert(m["a"] == "b");
 //   assert(m["c"] == "");  // last component value equals ""
@@ -116,12 +116,12 @@ namespace strings {
 // Example 6:
 //   // Splits on the empty string, which results in each character of the input
 //   // string becoming one element in the output collection.
-//   vector<string> v = strings::Split("abc", "");
+//   vector<string> v = Split("abc", "");
 //   assert(v.size() == 3);
 //
 // Example 7:
 //   // Stores first two split strings as the members in an std::pair.
-//   std::pair<string, string> p = strings::Split("a,b,c", ",");
+//   std::pair<string, string> p = Split("a,b,c", ",");
 //   EXPECT_EQ("a", p.first);
 //   EXPECT_EQ("b", p.second);
 //   // "c" is omitted because std::pair can hold only two elements.
@@ -141,15 +141,15 @@ namespace strings {
 // than two split substrings, the empty string is used for the corresponding
 // std::pair member.
 //
-// The strings::Split() function can be used multiple times to perform more
+// The Split() function can be used multiple times to perform more
 // complicated splitting logic, such as intelligently parsing key-value pairs.
 // For example
 //
 //   // The input string "a=b=c,d=e,f=,g" becomes
 //   // { "a" => "b=c", "d" => "e", "f" => "", "g" => "" }
 //   map<string, string> m;
-//   for (StringPiece sp : strings::Split("a=b=c,d=e,f=,g", ",")) {
-//     m.insert(strings::Split(sp, strings::delimiter::Limit("=", 1)));
+//   for (StringPiece sp : Split("a=b=c,d=e,f=,g", ",")) {
+//     m.insert(Split(sp, delimiter::Limit("=", 1)));
 //   }
 //   EXPECT_EQ("b=c", m.find("a")->second);
 //   EXPECT_EQ("e", m.find("d")->second);
@@ -167,7 +167,7 @@ namespace strings {
 // delimiter is actually an object that defines the boundaries between elements
 // in the provided input. If a string (const char*, ::string, or StringPiece) is
 // passed in place of an explicit Delimiter object, the argument is implicitly
-// converted to a ::strings::delimiter::Literal.
+// converted to a ::delimiter::Literal.
 //
 // With this split API comes the formal concept of a Delimiter (big D). A
 // Delimiter is an object with a Find() function that knows how find the first
@@ -184,16 +184,16 @@ namespace strings {
 // The following are examples of using some provided Delimiter objects:
 //
 // Example 1:
-//   // Because a string literal is converted to a strings::delimiter::Literal,
+//   // Because a string literal is converted to a delimiter::Literal,
 //   // the following two splits are equivalent.
-//   vector<string> v1 = strings::Split("a,b,c", ",");           // (1)
-//   using ::strings::delimiter::Literal;
-//   vector<string> v2 = strings::Split("a,b,c", Literal(","));  // (2)
+//   vector<string> v1 = Split("a,b,c", ",");           // (1)
+//   using ::delimiter::Literal;
+//   vector<string> v2 = Split("a,b,c", Literal(","));  // (2)
 //
 // Example 2:
 //   // Splits on any of the characters specified in the delimiter string.
-//   using ::strings::delimiter::AnyOf;
-//   vector<string> v = strings::Split("a,b;c-d", AnyOf(",;-"));
+//   using ::delimiter::AnyOf;
+//   vector<string> v = Split("a,b;c-d", AnyOf(",;-"));
 //   assert(v.size() == 4);
 //
 // Example 3:
@@ -202,8 +202,8 @@ namespace strings {
 //   // to matching at most one time. The last element in the returned
 //   // collection will contain all unsplit pieces, which may contain instances
 //   // of the delimiter.
-//   using ::strings::delimiter::Limit;
-//   vector<string> v = strings::Split("a,b,c", Limit(",", 1));
+//   using ::delimiter::Limit;
+//   vector<string> v = Split("a,b,c", Limit(",", 1));
 //   assert(v.size() == 2);  // Limited to 1 delimiter; so two elements found
 //   assert(v[0] == "a");
 //   assert(v[1] == "b,c");
@@ -220,12 +220,12 @@ namespace strings {
 // (true) or excluded (false).
 //
 // One example where this is useful is when filtering out empty substrings. By
-// default, empty substrings may be returned by strings::Split(), which is
+// default, empty substrings may be returned by Split(), which is
 // similar to the way split functions work in other programming languages. For
 // example:
 //
 //   // Empty strings *are* included in the returned collection.
-//   vector<string> v = strings::Split(",a,,b,", ",");
+//   vector<string> v = Split(",a,,b,", ",");
 //   assert(v.size() ==  5);  // v[0] == "", v[1] == "a", v[2] == "", ...
 //
 // These empty strings can be filtered out of the results by simply passing the
@@ -236,8 +236,8 @@ namespace strings {
 // Example 1:
 //   // Uses SkipEmpty to omit empty strings. Strings containing whitespace are
 //   // not empty and are therefore not skipped.
-//   using strings::SkipEmpty;
-//   vector<string> v = strings::Split(",a, ,b,", ",", SkipEmpty());
+//   using SkipEmpty;
+//   vector<string> v = Split(",a, ,b,", ",", SkipEmpty());
 //   assert(v.size() == 3);
 //   assert(v[0] == "a");
 //   assert(v[1] == " ");  // <-- The whitespace makes the string not empty.
@@ -246,8 +246,8 @@ namespace strings {
 // Example 2:
 //   // Uses SkipWhitespace to skip all strings that are either empty or contain
 //   // only whitespace.
-//   using strings::SkipWhitespace;
-//   vector<string> v = strings::Split(",a, ,b,", ",",  SkipWhitespace());
+//   using SkipWhitespace;
+//   vector<string> v = Split(",a, ,b,", ",",  SkipWhitespace());
 //   assert(v.size() == 2);
 //   assert(v[0] == "a");
 //   assert(v[1] == "b");
@@ -255,7 +255,7 @@ namespace strings {
 //
 //                     Differences between Split1 and Split2
 //
-// Split2 is the strings::Split() API described above. Split1 is a name for the
+// Split2 is the Split() API described above. Split1 is a name for the
 // collection of legacy Split*() functions declared later in this file. Most of
 // the Split1 functions follow a set of conventions that don't necessarily match
 // the conventions used in Split2. The following are some of the important
@@ -275,16 +275,16 @@ namespace strings {
 //   Most Split1 functions treated their delimiter argument as a string of
 //   individual byte delimiters. For example, a delimiter of ",;" would split on
 //   "," and ";", not the substring ",;". This behavior is equivalent to the
-//   Split2 delimiter strings::delimiter::AnyOf, which is *not* the default. By
-//   default, strings::Split() splits using strings::delimiter::Literal() which
+//   Split2 delimiter delimiter::AnyOf, which is *not* the default. By
+//   default, Split() splits using delimiter::Literal() which
 //   would treat the whole string ",;" as a single delimiter string.
 //
 // SkipEmpty -> allow empty:
 //   Most Split1 functions omitted empty substrings in the results. To keep
 //   empty substrings one would have to use an explicitly named
 //   Split*AllowEmpty() function. This behavior is reversed in Split2. By
-//   default, strings::Split() *allows* empty substrings in the output. To skip
-//   them, use the strings::SkipEmpty predicate.
+//   default, Split() *allows* empty substrings in the output. To skip
+//   them, use the SkipEmpty predicate.
 //
 // string -> user's choice:
 //   Most Split1 functions return collections of string objects. Some return
@@ -334,8 +334,8 @@ namespace delimiter {
 
 // Represents a literal string delimiter. Examples:
 //
-//   using ::strings::delimiter::Literal;
-//   vector<string> v = strings::Split("a=>b=>c", Literal("=>"));
+//   using ::delimiter::Literal;
+//   vector<string> v = Split("a=>b=>c", Literal("=>"));
 //   assert(v.size() == 3);
 //   assert(v[0] == "a");
 //   assert(v[1] == "b");
@@ -343,8 +343,8 @@ namespace delimiter {
 //
 // The next example uses the empty string as a delimiter.
 //
-//   using ::strings::delimiter::Literal;
-//   vector<string> v = strings::Split("abc", Literal(""));
+//   using ::delimiter::Literal;
+//   vector<string> v = Split("abc", Literal(""));
 //   assert(v.size() == 3);
 //   assert(v[0] == "a");
 //   assert(v[1] == "b");
@@ -364,8 +364,8 @@ class Literal {
 // StringPiece::find_first_of() and Literal uses StringPiece::find(). AnyOf
 // examples:
 //
-//   using ::strings::delimiter::AnyOf;
-//   vector<string> v = strings::Split("a,b=c", AnyOf(",="));
+//   using ::delimiter::AnyOf;
+//   vector<string> v = Split("a,b=c", AnyOf(",="));
 //
 //   assert(v.size() == 3);
 //   assert(v[0] == "a");
@@ -389,8 +389,8 @@ class AnyOf {
 // Wraps another delimiter and sets a max number of matches for that delimiter.
 // Create LimitImpls using the Limit() function. Example:
 //
-//   using ::strings::delimiter::Limit;
-//   vector<string> v = strings::Split("a,b,c,d", Limit(",", 2));
+//   using ::delimiter::Limit;
+//   vector<string> v = Split("a,b,c,d", Limit(",", 2));
 //
 //   assert(v.size() == 3);  // Split on 2 commas, giving a vector with 3 items
 //   assert(v[0] == "a");
@@ -440,12 +440,12 @@ inline LimitImpl<Literal> Limit(StringPiece s, int limit) {
 //
 // Predicates are functors that return bool indicating whether the given
 // StringPiece should be included in the split output. If the predicate returns
-// false then the string will be excluded from the output from strings::Split().
+// false then the string will be excluded from the output from Split().
 //
 
 // Always returns true, indicating that all strings--including empty
 // strings--should be included in the split output. This predicate is not
-// strictly needed because this is the default behavior of the strings::Split()
+// strictly needed because this is the default behavior of the Split()
 // function. But it might be useful at some call sites to make the intent
 // explicit.
 //
@@ -458,7 +458,7 @@ struct AllowEmpty {
 };
 
 // Returns false if the given StringPiece is empty, indicating that the
-// strings::Split() API should omit the empty string.
+// Split() API should omit the empty string.
 //
 // vector<string> v = Split(" a , ,,b,", ",", SkipEmpty());
 // EXPECT_THAT(v, ElementsAre(" a ", " ", "b"));
@@ -469,7 +469,7 @@ struct SkipEmpty {
 };
 
 // Returns false if the given StringPiece is empty or contains only whitespace,
-// indicating that the strings::Split() API should omit the string.
+// indicating that the Split() API should omit the string.
 //
 // vector<string> v = Split(" a , ,,b,", ",", SkipWhitespace());
 // EXPECT_THAT(v, ElementsAre(" a ", "b"));
@@ -533,7 +533,6 @@ inline internal::Splitter<delimiter::Literal, Predicate> Split(
       text, delimiter::Literal(delimiter), p);
 }
 
-}  // namespace strings
 
 //
 // ==================== LEGACY SPLIT FUNCTIONS ====================
@@ -662,14 +661,14 @@ void SplitStringPieceToVector(const StringPiece& full,
 // SplitStringAllowEmpty().
 //
 // NOTE: Do not use this for multi-byte delimiters such as UTF-8 strings. Use
-// strings::Split() with strings::delimiter::Literal as the delimiter.
+// Split() with delimiter::Literal as the delimiter.
 //
 // ==> NEW API: Consider using the new Split API defined above. <==
 // Example:
 //
-//   using strings::SkipEmpty;
-//   using strings::Split;
-//   using strings::delimiter::AnyOf;
+//   using SkipEmpty;
+//   using Split;
+//   using delimiter::AnyOf;
 //
 //   vector<string> v = Split(full, AnyOf(delimiter), SkipEmpty());
 //
@@ -704,8 +703,8 @@ void SplitStringToHashmapUsing(const string& full, const char* delim,
 //
 // ==> NEW API: Consider using the new Split API defined above. <==
 //
-//   using strings::Split;
-//   using strings::delimiter::AnyOf;
+//   using Split;
+//   using delimiter::AnyOf;
 //
 //   vector<string> v = Split(full, AnyOf(delimiter));
 //
@@ -734,16 +733,16 @@ void SplitStringAllowEmpty(const string& full, const char* delim,
 //   All versions other than "AllowEmpty" discard any empty substrings.
 // ----------------------------------------------------------------------
 void SplitStringWithEscaping(const string& full,
-                             const strings::CharSet& delimiters,
+                             const CharSet& delimiters,
                              vector<string>* result);
 void SplitStringWithEscapingAllowEmpty(const string& full,
-                                       const strings::CharSet& delimiters,
+                                       const CharSet& delimiters,
                                        vector<string>* result);
 void SplitStringWithEscapingToSet(const string& full,
-                                  const strings::CharSet& delimiters,
+                                  const CharSet& delimiters,
                                   set<string>* result);
 void SplitStringWithEscapingToHashset(const string& full,
-                                      const strings::CharSet& delimiters,
+                                      const CharSet& delimiters,
                                       hash_set<string>* result);
 
 // ----------------------------------------------------------------------
@@ -973,13 +972,13 @@ bool SplitStructuredLineWithEscapes(StringPiece line,
 // ==> NEW API: Consider using the new Split API defined above. <==
 //
 // The SplitStringIntoKeyValues() function has some subtle and surprising
-// semantics in various corner cases. To avoid this the strings::Split API is
+// semantics in various corner cases. To avoid this the Split API is
 // recommended. The following example shows how to split a string of delimited
-// key-value pairs into a vector of pairs using the strings::Split API.
+// key-value pairs into a vector of pairs using the Split API.
 //
-//   using strings::Split;
-//   using strings::delimiter::AnyOf;
-//   using strings::delimiter::Limit;
+//   using Split;
+//   using delimiter::AnyOf;
+//   using delimiter::Limit;
 //
 //   pair<string, StringPiece> key_values =
 //       Split(line, Limit(AnyOf(kv_delim), 1));
@@ -1018,14 +1017,14 @@ bool SplitStringIntoKeyValues(const string& line,
 // ==> NEW API: Consider using the new Split API defined above. <==
 //
 // The SplitStringIntoKeyValuePairs() function has some subtle and surprising
-// semantics in various corner cases. To avoid this the strings::Split API is
+// semantics in various corner cases. To avoid this the Split API is
 // recommended. The following example shows how to split a string of delimited
-// key-value pairs into a vector of pairs using the strings::Split API.
+// key-value pairs into a vector of pairs using the Split API.
 //
-//   using strings::SkipEmpty;
-//   using strings::Split;
-//   using strings::delimiter::AnyOf;
-//   using strings::delimiter::Limit;
+//   using SkipEmpty;
+//   using Split;
+//   using delimiter::AnyOf;
+//   using delimiter::Limit;
 //
 //   vector<pair<string, string>> pairs;  // or even map<string, string>
 //   for (StringPiece sp : Split(line, AnyOf(pair_delim), SkipEmpty())) {
@@ -1140,7 +1139,6 @@ bool SplitStringAndParse(StringPiece source, StringPiece delim,
   return SplitStringAndParseToList(source, delim, parse, result);
 }
 
-namespace strings {
 namespace internal {
 
 template <class Container, class InsertPolicy>
@@ -1153,9 +1151,9 @@ bool SplitStringAndParseToInserter(
   CHECK(NULL != delim.data());
   CHECK_GT(delim.size(), 0);
   bool retval = true;
-  vector<StringPiece> pieces = strings::Split(source,
-                                              strings::delimiter::AnyOf(delim),
-                                              strings::SkipEmpty());
+  vector<StringPiece> pieces = Split(source,
+                                              delimiter::AnyOf(delim),
+                                              SkipEmpty());
   for (const auto& piece : pieces) {
     typename Container::value_type t;
     if (parse(piece.as_string(), &t)) {
@@ -1181,7 +1179,6 @@ struct BackInsertPolicy {
 };
 
 }  // namespace internal
-}  // namespace strings
 
 // SplitStringAndParseToContainer() -- see description above
 template <class Container>
@@ -1189,8 +1186,8 @@ bool SplitStringAndParseToContainer(
     StringPiece source, StringPiece delim,
     bool (*parse)(const string& str, typename Container::value_type* value),
     Container* result) {
-  return strings::internal::SplitStringAndParseToInserter(
-      source, delim, parse, result, strings::internal::BasicInsertPolicy());
+  return internal::SplitStringAndParseToInserter(
+      source, delim, parse, result, internal::BasicInsertPolicy());
 }
 
 // SplitStringAndParseToList() -- see description above
@@ -1199,11 +1196,12 @@ bool SplitStringAndParseToList(
     StringPiece source, StringPiece delim,
     bool (*parse)(const string& str, typename List::value_type* value),
     List* result) {
-  return strings::internal::SplitStringAndParseToInserter(
-      source, delim, parse, result, strings::internal::BackInsertPolicy());
+  return internal::SplitStringAndParseToInserter(
+      source, delim, parse, result, internal::BackInsertPolicy());
 }
 
 // END DOXYGEN SplitFunctions grouping
 /* @} */
 
-#endif  // STRINGS_SPLIT_H_
+} // namespace base
+#endif  // BASE_STRINGS_SPLIT_H_

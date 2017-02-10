@@ -1,4 +1,3 @@
-// Copyright 2011 Google Inc. All Rights Reserved.
 //
 // Contains the legacy Bob Jenkins Lookup2-based hashing routines. These need to
 // always return the same results as their values have been recorded in various
@@ -16,12 +15,14 @@
 // to load words from memory a byte at a time.  See gwshash.cc for an
 // implementation that is compatible with Bob Jenkins' lookup2.c.
 
-#include "kudu/gutil/hash/jenkins.h"
+#include "base/hash/jenkins.h"
 
-#include "kudu/gutil/integral_types.h"
+#include "base/core/integral_types.h"
 #include <glog/logging.h>
-#include "kudu/gutil/logging-inl.h"
-#include "kudu/gutil/hash/jenkins_lookup2.h"
+#include "base/core/logging-inl.h"
+#include "base/hash/jenkins_lookup2.h"
+
+namespace base {
 
 static inline uint32 char2unsigned(char c) {
   return static_cast<uint32>(static_cast<unsigned char>(c));
@@ -186,3 +187,5 @@ uint64 Hash64StringWithSeed(const char *s, uint32 len, uint64 c) {
    mix(a,b,c);
    return c;
 }
+
+} // namespace base

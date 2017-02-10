@@ -1,10 +1,10 @@
-// Copyright 2011 Google Inc. All Rights Reserved.
+//
 // based on contributions of various authors in strings/strutil_unittest.cc
 //
 // This file contains functions that remove a defined part from the string,
 // i.e., strip the string.
 
-#include "kudu/gutil/strings/strip.h"
+#include "base/strings/strip.h"
 
 #include <assert.h>
 #include <string.h>
@@ -18,8 +18,10 @@ using std::swap;
 #include <string>
 using std::string;
 
-#include "kudu/gutil/strings/ascii_ctype.h"
-#include "kudu/gutil/strings/stringpiece.h"
+#include "base/strings/ascii_ctype.h"
+#include "base/strings/stringpiece.h"
+
+namespace base {
 
 string StripPrefixString(StringPiece str, const StringPiece& prefix) {
   if (str.starts_with(prefix))
@@ -382,3 +384,5 @@ void TrimRunsInString(string* s, StringPiece remove) {
 void RemoveNullsInString(string* s) {
   s->erase(remove(s->begin(), s->end(), '\0'), s->end());
 }
+
+} // namespace base

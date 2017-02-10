@@ -1,18 +1,14 @@
-// Copyright 2008 and onwards Google, Inc.
-//
-// #status: RECOMMENDED
-// #category: operations on strings
-// #summary: Merges strings or numbers with no delimiter.
-//
 #ifndef STRINGS_STRCAT_H_
 #define STRINGS_STRCAT_H_
 
 #include <string>
 using std::string;
 
-#include "kudu/gutil/integral_types.h"
-#include "kudu/gutil/strings/numbers.h"
-#include "kudu/gutil/strings/stringpiece.h"
+#include "base/core/integral_types.h"
+#include "base/strings/numbers.h"
+#include "base/strings/stringpiece.h"
+
+namespace base {
 
 // The AlphaNum type was designed to be used as the parameter type for StrCat().
 // I suppose that any routine accepting either a string or a number could accept
@@ -115,21 +111,21 @@ string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
               const AlphaNum &d, const AlphaNum &e, const AlphaNum &f,
               const AlphaNum &g, const AlphaNum &h);
 
-namespace strings {
+namespace base {
 namespace internal {
 
 // Do not call directly - this is not part of the public API.
 string StrCatNineOrMore(const AlphaNum *a1, ...);
 
 }  // namespace internal
-}  // namespace strings
+}  // namespace base
 
 // Support 9 or more arguments
 inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &d, const AlphaNum &e, const AlphaNum &f,
                      const AlphaNum &g, const AlphaNum &h, const AlphaNum &i) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              null_alphanum);
 }
 
@@ -138,7 +134,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &g, const AlphaNum &h, const AlphaNum &i,
                      const AlphaNum &j) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, null_alphanum);
 }
 
@@ -147,7 +143,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &g, const AlphaNum &h, const AlphaNum &i,
                      const AlphaNum &j, const AlphaNum &k) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, null_alphanum);
 }
 
@@ -156,7 +152,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &g, const AlphaNum &h, const AlphaNum &i,
                      const AlphaNum &j, const AlphaNum &k, const AlphaNum &l) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, &l, null_alphanum);
 }
 
@@ -166,7 +162,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &j, const AlphaNum &k, const AlphaNum &l,
                      const AlphaNum &m) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, &l, &m, null_alphanum);
 }
 
@@ -176,7 +172,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &j, const AlphaNum &k, const AlphaNum &l,
                      const AlphaNum &m, const AlphaNum &n) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, &l, &m, &n, null_alphanum);
 }
 
@@ -186,7 +182,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &j, const AlphaNum &k, const AlphaNum &l,
                      const AlphaNum &m, const AlphaNum &n, const AlphaNum &o) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, &l, &m, &n, &o,
                                              null_alphanum);
 }
@@ -198,7 +194,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &m, const AlphaNum &n, const AlphaNum &o,
                      const AlphaNum &p) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, &l, &m, &n, &o, &p,
                                              null_alphanum);
 }
@@ -210,7 +206,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &m, const AlphaNum &n, const AlphaNum &o,
                      const AlphaNum &p, const AlphaNum &q) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, &l, &m, &n, &o, &p, &q,
                                              null_alphanum);
 }
@@ -222,7 +218,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &m, const AlphaNum &n, const AlphaNum &o,
                      const AlphaNum &p, const AlphaNum &q, const AlphaNum &r) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, &l, &m, &n, &o, &p, &q, &r,
                                              null_alphanum);
 }
@@ -235,7 +231,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &p, const AlphaNum &q, const AlphaNum &r,
                      const AlphaNum &s) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, &l, &m, &n, &o, &p, &q, &r,
                                              &s, null_alphanum);
 }
@@ -248,7 +244,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &p, const AlphaNum &q, const AlphaNum &r,
                      const AlphaNum &s, const AlphaNum &t) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, &l, &m, &n, &o, &p, &q, &r,
                                              &s, &t, null_alphanum);
 }
@@ -261,7 +257,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &p, const AlphaNum &q, const AlphaNum &r,
                      const AlphaNum &s, const AlphaNum &t, const AlphaNum &u) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, &l, &m, &n, &o, &p, &q, &r,
                                              &s, &t, &u, null_alphanum);
 }
@@ -275,7 +271,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &s, const AlphaNum &t, const AlphaNum &u,
                      const AlphaNum &v) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, &l, &m, &n, &o, &p, &q, &r,
                                              &s, &t, &u, &v, null_alphanum);
 }
@@ -289,7 +285,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &s, const AlphaNum &t, const AlphaNum &u,
                      const AlphaNum &v, const AlphaNum &w) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, &l, &m, &n, &o, &p, &q, &r,
                                              &s, &t, &u, &v, &w, null_alphanum);
 }
@@ -303,7 +299,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &s, const AlphaNum &t, const AlphaNum &u,
                      const AlphaNum &v, const AlphaNum &w, const AlphaNum &x) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, &l, &m, &n, &o, &p, &q, &r,
                                              &s, &t, &u, &v, &w, &x,
                                              null_alphanum);
@@ -319,7 +315,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &v, const AlphaNum &w, const AlphaNum &x,
                      const AlphaNum &y) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, &l, &m, &n, &o, &p, &q, &r,
                                              &s, &t, &u, &v, &w, &x, &y,
                                              null_alphanum);
@@ -335,7 +331,7 @@ inline string StrCat(const AlphaNum &a, const AlphaNum &b, const AlphaNum &c,
                      const AlphaNum &v, const AlphaNum &w, const AlphaNum &x,
                      const AlphaNum &y, const AlphaNum &z) {
   const AlphaNum* null_alphanum = NULL;
-  return strings::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
+  return base::internal::StrCatNineOrMore(&a, &b, &c, &d, &e, &f, &g, &h, &i,
                                              &j, &k, &l, &m, &n, &o, &p, &q, &r,
                                              &s, &t, &u, &v, &w, &x, &y, &z,
                                              null_alphanum);
@@ -377,4 +373,5 @@ void StrAppend(string *dest,      const AlphaNum &a, const AlphaNum &b,
                const AlphaNum &h = gEmptyAlphaNum,
                const AlphaNum &i = gEmptyAlphaNum);
 
+} // namespace base
 #endif  // STRINGS_STRCAT_H_

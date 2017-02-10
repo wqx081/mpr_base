@@ -1,5 +1,3 @@
-// Copyright 2010 Google Inc. All Rights Reserved.
-// Authors: gpike@google.com (Geoff Pike), jyrki@google.com (Jyrki Alakuijala)
 //
 // This file provides CityHash64() and related functions.
 //
@@ -14,7 +12,7 @@
 // optimize the code here by writing a program that systematically explores
 // more of the space of possible hash functions, or by using SIMD instructions.
 
-#include "kudu/gutil/hash/city.h"
+#include "base/hash/city.h"
 
 #include <sys/types.h>
 #include <algorithm>
@@ -28,14 +26,14 @@ using std::swap;
 using std::make_pair;
 using std::pair;
 
-#include "kudu/gutil/int128.h"
-#include "kudu/gutil/integral_types.h"
+#include "base/core/int128.h"
+#include "base/core/integral_types.h"
 #include <glog/logging.h>
-#include "kudu/gutil/logging-inl.h"
-#include "kudu/gutil/hash/hash128to64.h"
-#include "kudu/gutil/endian.h"
+#include "base/core/logging-inl.h"
+#include "base/hash/hash128to64.h"
+#include "base/core/endian.h"
 
-namespace util_hash {
+namespace base {
 
 // Some primes between 2^63 and 2^64 for various uses.
 static const uint64 k0 = 0xa5b85c5e198ed849ULL;
@@ -314,4 +312,4 @@ uint128 CityHash128(const char *s, size_t len) {
   }
 }
 
-}  // namespace util_hash
+}  // namespace base

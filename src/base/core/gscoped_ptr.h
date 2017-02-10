@@ -133,7 +133,7 @@ struct DefaultDeleter {
     // cannot convert to T*.
     enum { T_must_be_complete = sizeof(T) };
     enum { U_must_be_complete = sizeof(U) };
-    COMPILE_ASSERT((base::is_convertible<U*, T*>::value),
+    COMPILE_ASSERT((is_convertible<U*, T*>::value),
                    U_ptr_must_implicitly_convert_to_T_ptr);
   }
   inline void operator()(T* ptr) const {
@@ -182,8 +182,8 @@ namespace internal {
 
 template <typename T> struct IsNotRefCounted {
   enum {
-    value = !base::is_convertible<T*, base::subtle::RefCountedBase*>::value &&
-        !base::is_convertible<T*, base::subtle::RefCountedThreadSafeBase*>::
+    value = !is_convertible<T*, subtle::RefCountedBase*>::value &&
+        !is_convertible<T*, subtle::RefCountedThreadSafeBase*>::
             value
   };
 };

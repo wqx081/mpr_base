@@ -1,6 +1,4 @@
 //
-// Copyright 1999-2006 and onwards Google, Inc.
-//
 // Useful string functions and so forth.  This is a grab-bag file.
 //
 // You might also want to look at memutil.h, which holds mem*()
@@ -42,13 +40,13 @@ using std::string;
 #include <vector>
 using std::vector;
 
-#include "kudu/gutil/integral_types.h"
-#include "kudu/gutil/port.h"
-#include "kudu/gutil/strings/stringpiece.h"
+#include "base/core/integral_types.h"
+#include "base/core/port.h"
+#include "base/strings/stringpiece.h"
 
 // Newer functions.
 
-namespace strings {
+namespace base {
 
 // Finds the next end-of-line sequence.
 // An end-of-line sequence is one of:
@@ -65,7 +63,6 @@ namespace strings {
 
 StringPiece FindEol(StringPiece sp);
 
-}  // namespace strings
 
 // Older functions.
 
@@ -345,7 +342,6 @@ inline char* safestrncpy(char* dest, const char* src, size_t n) {
   return dest;
 }
 
-namespace strings {
 
 // BSD-style safe and consistent string copy functions.
 // Copies |src| to |dst|, where |dst_size| is the total allocated size of |dst|.
@@ -355,7 +351,6 @@ namespace strings {
 // NOTE: All sizes are in number of characters, NOT in bytes.
 size_t strlcpy(char* dst, const char* src, size_t dst_size);
 
-} // namespace strings
 
 // Replaces the first occurrence (if replace_all is false) or all occurrences
 // (if replace_all is true) of oldsub in s with newsub. In the second version,
@@ -511,4 +506,5 @@ int SafeSnprintf(char* str, size_t size, const char* format, ...)
 // line, or false on end-of-file or error.
 bool GetlineFromStdioFile(FILE* file, string* str, char delim);
 
+} // namespace base
 #endif  // STRINGS_UTIL_H_

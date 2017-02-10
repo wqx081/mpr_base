@@ -1,4 +1,3 @@
-// Copyright 2012 Google Inc. All Rights Reserved.
 //
 // This file declares INTERNAL parts of the Split API that are inline/templated
 // or otherwise need to be available at compile time. The main two abstractions
@@ -26,15 +25,15 @@ using std::multimap;
 #include <vector>
 using std::vector;
 
-#include "kudu/gutil/port.h"  // for LANG_CXX11
-#include "kudu/gutil/strings/stringpiece.h"
+#include "base/core/port.h"  // for LANG_CXX11
+#include "base/strings/stringpiece.h"
 
 #ifdef LANG_CXX11
 // This must be included after "base/port.h", which defines LANG_CXX11.
 #include <initializer_list>
 #endif  // LANG_CXX11
 
-namespace strings {
+namespace base {
 
 namespace internal {
 
@@ -56,7 +55,7 @@ struct NoFilter {
 //
 // Usage:
 //
-//   using strings::delimiter::Literal;
+//   using delimiter::Literal;
 //   Literal d(",");
 //   for (SplitIterator<Literal> it("a,b,c", d), end(d); it != end; ++it) {
 //     StringPiece substring = *it;
@@ -283,9 +282,9 @@ class Splitter {
   // implicit conversion operator (above).
   template <typename T>
   struct is_map {
-    template <typename U> static base::big_ test(typename U::mapped_type*);
-    template <typename> static base::small_ test(...);
-    static const bool value = (sizeof(test<T>(0)) == sizeof(base::big_));
+    template <typename U> static big_ test(typename U::mapped_type*);
+    template <typename> static small_ test(...);
+    static const bool value = (sizeof(test<T>(0)) == sizeof(big_));
   };
 
   // Base template handles splitting to non-map containers
@@ -408,6 +407,6 @@ class Splitter {
 
 }  // namespace internal
 
-}  // namespace strings
+}  // namespace base
 
 #endif  // STRINGS_SPLIT_INTERNAL_H_

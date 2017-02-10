@@ -1,15 +1,13 @@
-// Copyright 2008 Google Inc.  All rights reserved.
-
-#include "kudu/gutil/strings/substitute.h"
+#include "base/strings/substitute.h"
 
 #include <glog/logging.h>
-#include "kudu/gutil/logging-inl.h"
-#include "kudu/gutil/macros.h"
-#include "kudu/gutil/strings/ascii_ctype.h"
-#include "kudu/gutil/strings/escaping.h"
-#include "kudu/gutil/stl_util.h"
+#include "base/core/logging-inl.h"
+#include "base/core/macros.h"
+#include "base/strings/ascii_ctype.h"
+#include "base/strings/escaping.h"
+#include "base/core/stl_util.h"
 
-namespace strings {
+namespace base {
 
 using internal::SubstituteArg;
 
@@ -32,14 +30,14 @@ int SubstitutedSize(StringPiece format,
   for (int i = 0; i < format.size(); i++) {
     if (format[i] == '$') {
       if (i+1 >= format.size()) {
-        LOG(DFATAL) << "Invalid strings::Substitute() format string: \""
+        LOG(DFATAL) << "Invalid base::Substitute() format string: \""
                     << CEscape(format) << "\".";
         return 0;
       } else if (ascii_isdigit(format[i+1])) {
         int index = format[i+1] - '0';
         if (args_array[index]->size() == -1) {
           LOG(DFATAL)
-            << "strings::Substitute format string invalid: asked for \"$"
+            << "base::Substitute format string invalid: asked for \"$"
             << index << "\", but only " << CountSubstituteArgs(args_array)
             << " args were given.  Full format string was: \""
             << CEscape(format) << "\".";
@@ -51,7 +49,7 @@ int SubstitutedSize(StringPiece format,
         ++size;
         ++i;  // Skip next char.
       } else {
-        LOG(DFATAL) << "Invalid strings::Substitute() format string: \""
+        LOG(DFATAL) << "Invalid base::Substitute() format string: \""
                     << CEscape(format) << "\".";
         return 0;
       }
@@ -130,4 +128,4 @@ SubstituteArg::SubstituteArg(const void* value) {
   }
 }
 
-}  // namespace strings
+}  // namespace base

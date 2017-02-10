@@ -1,8 +1,4 @@
-// Copyright 2008 and onwards Google Inc.  All rights reserved.
-//
-// Maintainer: Greg Miller <jgm@google.com>
-
-#include "kudu/gutil/strings/split.h"
+#include "base/strings/split.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -13,22 +9,24 @@ using std::iterator_traits;
 #include <limits>
 using std::numeric_limits;
 
-#include "kudu/gutil/integral_types.h"
+#include "base/core/integral_types.h"
 #include <glog/logging.h>
-#include "kudu/gutil/logging-inl.h"
-#include "kudu/gutil/macros.h"
-#include "kudu/gutil/strtoint.h"
-#include "kudu/gutil/strings/ascii_ctype.h"
-#include "kudu/gutil/strings/util.h"
-#include "kudu/gutil/hash/hash.h"
+#include "base/core/logging-inl.h"
+#include "base/core/macros.h"
+
+#include "base/strings/strtoint.h"
+#include "base/strings/ascii_ctype.h"
+#include "base/strings/util.h"
+#include "base/hash/hash.h"
 
 // Implementations for some of the Split2 API. Much of the Split2 API is
 // templated so it exists in header files, either strings/split.h or
 // strings/split_iternal.h.
-namespace strings {
+namespace base {
+
 namespace delimiter {
 
-namespace {
+//namespace {
 
 // This GenericFind() template function encapsulates the finding algorithm
 // shared between the Literal and AnyOf delimiters. The FindPolicy template
@@ -77,7 +75,7 @@ struct AnyOfPolicy {
   }
 };
 
-}  // namespace
+//}  // namespace
 
 //
 // Literal
@@ -102,15 +100,14 @@ StringPiece AnyOf::Find(StringPiece text) const {
 }
 
 }  // namespace delimiter
-}  // namespace strings
 
 //
 // ==================== LEGACY SPLIT FUNCTIONS ====================
 //
 
-using ::strings::SkipEmpty;
-using ::strings::delimiter::AnyOf;
-using ::strings::delimiter::Limit;
+//using delimiter::SkipEmpty;
+using delimiter::AnyOf;
+using delimiter::Limit;
 
 namespace {
 
@@ -176,17 +173,17 @@ void AppendToImpl(hash_map<string, string>* map_container, Splitter splitter) {
   AppendToMap(map_container, splitter);
 }
 
-// Appends the results of a call to strings::Split() to the specified container.
-// This function is used with the new strings::Split() API to implement the
+// Appends the results of a call to Split() to the specified container.
+// This function is used with the new Split() API to implement the
 // append semantics of the legacy Split*() functions.
 //
 // The "Splitter" template parameter is intended to be a
-// ::strings::internal::Splitter<>, which is the return value of a call to
-// strings::Split(). Sample usage:
+// ::internal::Splitter<>, which is the return value of a call to
+// Split(). Sample usage:
 //
 //   vector<string> v;
 //   ... add stuff to "v" ...
-//   AppendTo(&v, strings::Split("a,b,c", ","));
+//   AppendTo(&v, Split("a,b,c", ","));
 //
 template <typename Container, typename Splitter>
 void AppendTo(Container* container, Splitter splitter) {
@@ -308,14 +305,14 @@ void SplitStringIntoNPiecesAllowEmpty(const string& full,
                                       vector<string>* result) {
   if (pieces == 0) {
     // No limit when pieces is 0.
-    AppendTo(result, strings::Split(full, AnyOf(delim)));
+    AppendTo(result, Split(full, AnyOf(delim)));
   } else {
     // The input argument "pieces" specifies the max size that *result should
     // be. However, the argument to the Limit() delimiter is the max number of
     // delimiters, which should be one less than "pieces". Example: "a,b,c" has
     // 3 pieces and two comma delimiters.
     int limit = std::max(pieces - 1, 0);
-    AppendTo(result, strings::Split(full, Limit(AnyOf(delim), limit)));
+    AppendTo(result, Split(full, Limit(AnyOf(delim), limit)));
   }
 }
 
@@ -327,7 +324,7 @@ void SplitStringIntoNPiecesAllowEmpty(const string& full,
 // ----------------------------------------------------------------------
 void SplitStringAllowEmpty(const string& full, const char* delim,
                            vector<string>* result) {
-  AppendTo(result, strings::Split(full, AnyOf(delim)));
+  AppendTo(result, Split(full, AnyOf(delim)));
 }
 
 // If we know how much to allocate for a vector of strings, we can
@@ -421,22 +418,22 @@ void SplitStringUsing(const string& full,
 
 void SplitStringToHashsetUsing(const string& full, const char* delim,
                                hash_set<string>* result) {
-  AppendTo(result, strings::Split(full, AnyOf(delim), strings::SkipEmpty()));
+  AppendTo(result, Split(full, AnyOf(delim), SkipEmpty()));
 }
 
 void SplitStringToSetUsing(const string& full, const char* delim,
                            set<string>* result) {
-  AppendTo(result, strings::Split(full, AnyOf(delim), strings::SkipEmpty()));
+  AppendTo(result, Split(full, AnyOf(delim), SkipEmpty()));
 }
 
 void SplitStringToMapUsing(const string& full, const char* delim,
                            map<string, string>* result) {
-  AppendTo(result, strings::Split(full, AnyOf(delim), strings::SkipEmpty()));
+  AppendTo(result, Split(full, AnyOf(delim), SkipEmpty()));
 }
 
 void SplitStringToHashmapUsing(const string& full, const char* delim,
                                hash_map<string, string>* result) {
-  AppendTo(result, strings::Split(full, AnyOf(delim), strings::SkipEmpty()));
+  AppendTo(result, Split(full, AnyOf(delim), SkipEmpty()));
 }
 
 // ----------------------------------------------------------------------
@@ -451,9 +448,9 @@ void SplitStringPieceToVector(const StringPiece& full,
                               vector<StringPiece>* vec,
                               bool omit_empty_strings) {
   if (omit_empty_strings) {
-    AppendTo(vec, strings::Split(full, AnyOf(delim), SkipEmpty()));
+    AppendTo(vec, Split(full, AnyOf(delim), SkipEmpty()));
   } else {
-    AppendTo(vec, strings::Split(full, AnyOf(delim)));
+    AppendTo(vec, Split(full, AnyOf(delim)));
   }
 }
 
@@ -530,7 +527,7 @@ string SplitOneStringToken(const char ** source, const char * delim) {
 template <typename ITR>
 static inline
 void SplitStringWithEscapingToIterator(const string& src,
-                                       const strings::CharSet& delimiters,
+                                       const CharSet& delimiters,
                                        const bool allow_empty,
                                        ITR* result) {
   CHECK(!delimiters.Test('\\')) << "\\ is not allowed as a delimiter.";
@@ -566,28 +563,28 @@ void SplitStringWithEscapingToIterator(const string& src,
 }
 
 void SplitStringWithEscaping(const string &full,
-                             const strings::CharSet& delimiters,
+                             const CharSet& delimiters,
                              vector<string> *result) {
   std::back_insert_iterator< vector<string> > it(*result);
   SplitStringWithEscapingToIterator(full, delimiters, false, &it);
 }
 
 void SplitStringWithEscapingAllowEmpty(const string &full,
-                                       const strings::CharSet& delimiters,
+                                       const CharSet& delimiters,
                                        vector<string> *result) {
   std::back_insert_iterator< vector<string> > it(*result);
   SplitStringWithEscapingToIterator(full, delimiters, true, &it);
 }
 
 void SplitStringWithEscapingToSet(const string &full,
-                                  const strings::CharSet& delimiters,
+                                  const CharSet& delimiters,
                                   set<string> *result) {
   std::insert_iterator< set<string> > it(*result, result->end());
   SplitStringWithEscapingToIterator(full, delimiters, false, &it);
 }
 
 void SplitStringWithEscapingToHashset(const string &full,
-                                      const strings::CharSet& delimiters,
+                                      const CharSet& delimiters,
                                       hash_set<string> *result) {
   std::insert_iterator< hash_set<string> > it(*result, result->end());
   SplitStringWithEscapingToIterator(full, delimiters, false, &it);
@@ -1086,3 +1083,5 @@ void SplitStringToLines(const char* full,
     pos += cut_at;
   }
 }
+
+} // namespace base

@@ -1,8 +1,5 @@
-// Copyright 2004 and onwards Google Inc.
-//
-//
 
-#include "kudu/gutil/strings/stringpiece.h"
+#include "base/strings/stringpiece.h"
 
 #include <algorithm>
 #include <climits>
@@ -10,10 +7,10 @@
 #include <string.h>
 #include <string>
 
-#include "kudu/gutil/hash/hash.h"
-#include "kudu/gutil/logging-inl.h"
-#include "kudu/gutil/stl_util.h"
-#include "kudu/gutil/strings/memutil.h"
+#include "base/hash/hash.h"
+#include "base/core/logging-inl.h"
+#include "base/core/stl_util.h"
+#include "base/strings/memutil.h"
 
 using std::copy;
 using std::max;
@@ -23,16 +20,19 @@ using std::sort;
 using std::swap;
 using std::string;
 
+
 namespace std {
-  size_t hash<StringPiece>::operator()(StringPiece s) const {
-    return HashTo32(s.data(), s.size());
+  size_t hash<base::StringPiece>::operator()(base::StringPiece s) const {
+    return base::HashTo32(s.data(), s.size());
   }
 } // namespace std
 
-std::ostream& operator<<(std::ostream& o, StringPiece piece) {
+std::ostream& operator<<(std::ostream& o, base::StringPiece piece) {
   o.write(piece.data(), piece.size());
   return o;
 }
+
+namespace base {
 
 StringPiece::StringPiece(StringPiece x, int pos)
     : ptr_(x.ptr_ + pos), length_(x.length_ - pos) {
@@ -90,7 +90,7 @@ int StringPiece::rfind(StringPiece s, size_type pos) const {
   if (s.length_ == 0) return min(ulen, pos);
 
   const char* last = ptr_ + min(ulen - s.length_, pos) + s.length_;
-  const char* result = std::find_end(ptr_, last, s.ptr_, s.ptr_ + s.length_);
+  const char* result = ::std::find_end(ptr_, last, s.ptr_, s.ptr_ + s.length_);
   return result != last ? result - ptr_ : npos;
 }
 
@@ -222,3 +222,5 @@ StringPiece StringPiece::substr(size_type pos, size_type n) const {
 }
 
 const StringPiece::size_type StringPiece::npos = size_type(-1);
+
+} // namespace base

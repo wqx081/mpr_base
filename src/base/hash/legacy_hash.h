@@ -1,4 +1,3 @@
-// Copyright 2011 Google Inc. All Rights Reserved.
 //
 // This is a library of legacy hashing routines. These routines are still in
 // use, but are not encouraged for any new code, and may be removed at some
@@ -10,9 +9,11 @@
 #ifndef UTIL_HASH_LEGACY_HASH_H_
 #define UTIL_HASH_LEGACY_HASH_H_
 
-#include "kudu/gutil/integral_types.h"
-#include "kudu/gutil/hash/builtin_type_hash.h"
-#include "kudu/gutil/hash/string_hash.h"
+#include "base/core/integral_types.h"
+#include "base/hash/builtin_type_hash.h"
+#include "base/hash/string_hash.h"
+
+namespace base {
 
 // Hash8, Hash16 and Hash32 are for legacy use only.
 typedef uint32 Hash32;
@@ -81,4 +82,5 @@ inline uint16 HashTo16(const char *s, uint32 slen) {
   return retval == kIllegalHash16 ? static_cast<uint16>(retval-1) : retval;
 }
 
+} // namespace base
 #endif  // UTIL_HASH_LEGACY_HASH_H_

@@ -616,7 +616,7 @@ string Utf8SafeCHexEscape(const StringPiece& src) {
 // BackslashEscape and BackslashUnescape
 // ----------------------------------------------------------------------
 void BackslashEscape(const StringPiece& src,
-                     const base::CharSet& to_escape,
+                     const CharSet& to_escape,
                      string* dest) {
   dest->reserve(dest->size() + src.size());
   for (const char *p = src.data(), *end = src.data() + src.size();
@@ -639,7 +639,7 @@ void BackslashEscape(const StringPiece& src,
 }
 
 void BackslashUnescape(const StringPiece& src,
-                       const base::CharSet& to_unescape,
+                       const CharSet& to_unescape,
                        string* dest) {
   dest->reserve(dest->size() + src.size());
   bool escaped = false;

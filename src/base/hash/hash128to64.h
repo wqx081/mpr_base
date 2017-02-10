@@ -1,11 +1,10 @@
-// Copyright 2010 Google Inc. All Rights Reserved.
-// Authors: jyrki@google.com (Jyrki Alakuijala), gpike@google.com (Geoff Pike)
-
 #ifndef UTIL_HASH_HASH128TO64_H_
 #define UTIL_HASH_HASH128TO64_H_
 
-#include "kudu/gutil/int128.h"
-#include "kudu/gutil/integral_types.h"
+#include "base/core/int128.h"
+#include "base/core/integral_types.h"
+
+namespace base {
 
 // Hash 128 input bits down to 64 bits of output.
 // This is intended to be a reasonably good hash function.
@@ -21,4 +20,5 @@ inline uint64 Hash128to64(const uint128& x) {
   return b;
 }
 
+} // namespace base
 #endif  // UTIL_HASH_HASH128TO64_H_

@@ -1,4 +1,3 @@
-// Copyright 2011 Google Inc. All Rights Reserved.
 //
 // Legacy implementation of the core Jenkins lookup2 algorithm. This is used in
 // many older hash functions which we are unable to remove or change due to the
@@ -15,8 +14,10 @@
 #ifndef UTIL_HASH_JENKINS_LOOKUP2_H_
 #define UTIL_HASH_JENKINS_LOOKUP2_H_
 
-#include "kudu/gutil/integral_types.h"
-#include "kudu/gutil/port.h"
+#include "base/core/integral_types.h"
+#include "base/core/port.h"
+
+namespace base {
 
 // ----------------------------------------------------------------------
 // mix()
@@ -153,4 +154,5 @@ static inline uint32 Google1At(const char *ptr2) {
 // use more meaningful concepts.
 # define WORD_HASH
 
+} // namespace base
 #endif  // UTIL_HASH_JENKINS_LOOKUP2_H_

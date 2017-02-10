@@ -1,5 +1,3 @@
-// Copyright 2010 Google Inc. All Rights Reserved.
-// Authors: gpike@google.com (Geoff Pike), jyrki@google.com (Jyrki Alakuijala)
 //
 // This file provides a few functions for hashing strings.  On x86-64
 // hardware as of early 2010, CityHash64() is much faster than
@@ -23,10 +21,10 @@
 
 #include <stddef.h>  // for size_t.
 
-#include "kudu/gutil/int128.h"
-#include "kudu/gutil/integral_types.h"
+#include "base/core/int128.h"
+#include "base/core/integral_types.h"
 
-namespace util_hash {
+namespace base {
 
 // Hash function for a byte array.
 // The mapping may change from time to time.
@@ -48,6 +46,6 @@ uint128 CityHash128(const char *s, size_t len);
 // hashed into the result.  The mapping will never change.
 uint128 CityHash128WithSeed(const char *s, size_t len, uint128 seed);
 
-}  // namespace util_hash
+}  // namespace base
 
 #endif  // UTIL_HASH_CITY_H_

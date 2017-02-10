@@ -1,5 +1,3 @@
-// Copyright 2011 Google Inc. All Rights Reserved.
-// Refactored from contributions of various authors in strings/strutil.h
 //
 // This file contains functions that remove a defined part from the string,
 // i.e., strip the string.
@@ -11,8 +9,10 @@
 #include <string>
 using std::string;
 
-#include "kudu/gutil/strings/ascii_ctype.h"
-#include "kudu/gutil/strings/stringpiece.h"
+#include "base/strings/ascii_ctype.h"
+#include "base/strings/stringpiece.h"
+
+namespace base {
 
 // Given a string and a putative prefix, returns the string minus the
 // prefix string if the prefix matches, otherwise the original
@@ -269,4 +269,5 @@ int memrm(char* str, int strlen, char c);
 int strrmm(char* str, const char* chars);
 int strrmm(string* str, const string& chars);
 
+} // namespace base
 #endif  // STRINGS_STRIP_H_

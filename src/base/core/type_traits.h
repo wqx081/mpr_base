@@ -321,7 +321,6 @@ struct is_convertible
 };
 #endif
 
-}
 
 // Right now these macros are no-ops, and mostly just document the fact
 // these types are PODs, for human use.  They may be made more contentful
@@ -333,4 +332,5 @@ struct is_convertible
     typedef int Dummy_Type_For_PROPAGATE_POD_FROM_TEMPLATE_ARGUMENT ATTRIBUTE_UNUSED
 #define ENFORCE_POD(TypeName) typedef int Dummy_Type_For_ENFORCE_POD ATTRIBUTE_UNUSED
 
+} // namespace base
 #endif  // BASE_CORE_TYPE_TRAITS_H_

@@ -1,5 +1,3 @@
-// Copyright 2001, Google Inc.  All rights reserved.
-// Maintainer: mec@google.com (Michael Chastain)
 //
 // A StringPiece points to part or all of a string, Cord, double-quoted string
 // literal, or other string-like object.  A StringPiece does *not* own the
@@ -121,11 +119,14 @@
 #include <string.h>
 #include <string>
 
-#include "kudu/gutil/integral_types.h"
-#include "kudu/gutil/port.h"
-#include "kudu/gutil/type_traits.h"
-#include "kudu/gutil/strings/fastmem.h"
-#include "kudu/gutil/hash/hash.h"
+#include "base/core/integral_types.h"
+#include "base/core/port.h"
+#include "base/core/type_traits.h"
+
+#include "base/strings/fastmem.h"
+#include "base/hash/hash.h"
+
+namespace base {
 
 class StringPiece {
  private:
@@ -311,7 +312,7 @@ inline bool operator==(StringPiece x, StringPiece y) {
   }
 
   return x.data() == y.data() || len <= 0 ||
-      strings::memeq(x.data(), y.data(), len);
+      base::memeq(x.data(), y.data(), len);
 }
 
 inline bool operator!=(StringPiece x, StringPiece y) {
@@ -338,6 +339,8 @@ inline bool operator>=(StringPiece x, StringPiece y) {
 class StringPiece;
 template <class X> struct GoodFastHash;
 
+} // namespace base
+
 // ------------------------------------------------------------------
 // Functions used to create STL containers that use StringPiece
 //  Remember that a StringPiece's lifetime had better be less than
@@ -345,33 +348,32 @@ template <class X> struct GoodFastHash;
 //  cannot safely store a StringPiece into an STL container
 // ------------------------------------------------------------------
 
-// SWIG doesn't know how to parse this stuff properly. Omit it.
-#ifndef SWIG
-
 namespace std {
-template<> struct hash<StringPiece> {
-  size_t operator()(StringPiece s) const;
+template<> struct hash<base::StringPiece> {
+  size_t operator()(base::StringPiece s) const;
 };
 }  // namespace std
 
 
+namespace base {
+
 // An implementation of GoodFastHash for StringPiece.  See
 // GoodFastHash values.
-template<> struct GoodFastHash<StringPiece> {
+template<> struct GoodFastHash<base::StringPiece> {
   size_t operator()(StringPiece s) const {
-    return HashStringThoroughly(s.data(), s.size());
+    return base::HashStringThoroughly(s.data(), s.size());
   }
   // Less than operator, for MSVC.
-  bool operator()(const StringPiece& s1, const StringPiece& s2) const {
+  bool operator()(const base::StringPiece& s1, const base::StringPiece& s2) const {
     return s1 < s2;
   }
   static const size_t bucket_size = 4;  // These are required by MSVC
   static const size_t min_buckets = 8;  // 4 and 8 are defaults.
 };
-#endif
+
+} // namespace base
 
 // allow StringPiece to be logged
-extern ostream& operator<<(ostream& o, StringPiece piece);
-
+extern std::ostream& operator<<(std::ostream& o, base::StringPiece piece);
 
 #endif  // STRINGS_STRINGPIECE_H__

@@ -65,5 +65,4 @@ class CharSet {
 };
 
 }  // namespace base
-
 #endif  // BASE_STRINGS_CHARSET_H_

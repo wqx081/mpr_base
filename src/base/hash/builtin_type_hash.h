@@ -1,4 +1,3 @@
-// Copyright 2011 Google Inc. All Rights Reserved.
 //
 // Hash functions for C++ builtin types. These are all of the fundamental
 // integral and floating point types in the language as well as pointers. This
@@ -10,10 +9,12 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "kudu/gutil/casts.h"
-#include "kudu/gutil/integral_types.h"
-#include "kudu/gutil/macros.h"
-#include "kudu/gutil/hash/jenkins_lookup2.h"
+#include "base/core/casts.h"
+#include "base/core/integral_types.h"
+#include "base/core/macros.h"
+#include "base/hash/jenkins_lookup2.h"
+
+namespace base {
 
 inline uint32 Hash32NumWithSeed(uint32 num, uint32 c) {
   uint32 b = 0x9e3779b9UL;            // the golden ratio; an arbitrary value
@@ -92,4 +93,5 @@ inline uint64 Hash64DoubleWithSeed(double num, uint64 seed) {
   return a;
 }
 
+} // namespace base
 #endif  // UTIL_HASH_BUILTIN_TYPE_HASH_H_

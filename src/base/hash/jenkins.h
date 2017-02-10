@@ -1,4 +1,3 @@
-// Copyright 2011 Google Inc. All Rights Reserved.
 //
 // The core Jenkins Lookup2-based hashing routines. These are legacy hashing
 // routines and should be avoided in new code. Their implementations are dated
@@ -10,7 +9,9 @@
 #ifndef UTIL_HASH_JENKINS_H_
 #define UTIL_HASH_JENKINS_H_
 
-#include "kudu/gutil/integral_types.h"
+#include "base/core/integral_types.h"
+
+namespace base {
 
 // ----------------------------------------------------------------------
 // Hash32StringWithSeed()
@@ -37,4 +38,5 @@ uint64 Hash64StringWithSeed(const char *s, uint32 len, uint64 c);
 uint32 Hash32StringWithSeedReferenceImplementation(const char *s,
                                                    uint32 len, uint32 c);
 
+} // namespace base
 #endif  // UTIL_HASH_JENKINS_H_

@@ -1,6 +1,4 @@
-// Copyright 2008 and onwards Google Inc.  All rights reserved.
-
-#include "kudu/gutil/strings/strcat.h"
+#include "base/strings/strcat.h"
 
 #include <stdarg.h>
 #include <stdint.h>
@@ -8,11 +6,13 @@
 #include <string.h>
 
 #include <glog/logging.h>
-#include "kudu/gutil/logging-inl.h"
-#include "kudu/gutil/gscoped_ptr.h"
-#include "kudu/gutil/strings/ascii_ctype.h"
-#include "kudu/gutil/strings/escaping.h"
-#include "kudu/gutil/stl_util.h"
+#include "base/core/logging-inl.h"
+#include "base/core/gscoped_ptr.h"
+#include "base/strings/ascii_ctype.h"
+#include "base/strings/escaping.h"
+#include "base/core/stl_util.h"
+
+namespace base {
 
 AlphaNum gEmptyAlphaNum("");
 
@@ -250,3 +250,5 @@ void StrAppend(string *result,
   out = Append1(out, i);
   DCHECK_EQ(out, begin + result->size());
 }
+
+} // namespace base
